@@ -33,9 +33,9 @@ public class TipoDeCambioController {
     public ResponseEntity<String> updateExchangeRates(@RequestBody Map<String, Float> nuevosRatios) {
         try {
         	tipoCambioService.actualizarTiposDeCambio(nuevosRatios);
-            return ResponseEntity.ok("Exchange rates updated successfully");
+            return ResponseEntity.ok("Se actualizaron los datos correctamnete");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to update exchange rates");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se pudo actualizar los datos");
         }
     }
 }
