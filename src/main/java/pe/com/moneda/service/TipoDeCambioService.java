@@ -37,20 +37,27 @@ public class TipoDeCambioService {
 	
 	public void actualizarTiposDeCambio(Map<String, Float> nuevosTiposDeCambio) {
 		if (nuevosTiposDeCambio == null || nuevosTiposDeCambio.isEmpty()) {
-	        throw new IllegalArgumentException("New exchange rates cannot be null or empty.");
+	        throw new IllegalArgumentException("Los nuevos tipos no deben estar vacion o nulos.");
 	    }
 
-	    for (Map.Entry<String, Float> entry : nuevosTiposDeCambio.entrySet()) {
+		for (Map.Entry<String, Float> entry : nuevosTiposDeCambio.entrySet()) {
+	        if (!isValidCurrencyFormat(entry.getKey())) {
+	            throw new IllegalArgumentException("Formato de moneda no válido para: " + entry.getKey());
+	        }
+
 	        if (entry.getValue() == null || entry.getValue() <= 0) {
-	            throw new IllegalArgumentException("Invalid exchange rate for " + entry.getKey());
+	            throw new IllegalArgumentException("Entrada no válida para: " + entry.getKey());
 	        }
 	    }
 		rates.putAll(nuevosTiposDeCambio);
     }
 	
+	private boolean isValidCurrencyFormat(String currency) {
+	    return currency != null && currency.matches("^[A-Z]{3}_[A-Z]{3}$");
+	}
+	
 	 public MonedaResponse calculateExchange(MonedaRequest request) {
-	        //Map<String, Float> exchangeRates = tiposDeCambio();
-
+		 
 	        String key = request.getMonedaOrigen().toUpperCase() + "_" + request.getMonedaDestino().toUpperCase();
 	        Float tipoCambio = rates.get(key);
 
@@ -66,7 +73,7 @@ public class TipoDeCambioService {
 	                    String.valueOf(tipoCambio)
 	            );
 	        } else {
-	            throw new RuntimeException("Exchange rate not available for the specified currencies");
+	            throw new RuntimeException("Cambio no disponible para esas monedas");
 	        }
 	    }
 }
