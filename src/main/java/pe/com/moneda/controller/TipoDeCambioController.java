@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import pe.com.moneda.model.CambioDeRatiosResponse;
 import pe.com.moneda.model.MonedaRequest;
 import pe.com.moneda.model.MonedaResponse;
 import pe.com.moneda.service.TipoDeCambioService;
@@ -30,12 +31,14 @@ public class TipoDeCambioController {
     }
     
     @PostMapping("/actualizarCambio")
-    public ResponseEntity<String> updateExchangeRates(@RequestBody Map<String, Float> nuevosRatios) {
+    public ResponseEntity<CambioDeRatiosResponse> updateExchangeRates(@RequestBody Map<String, Float> nuevosRatios) {
         try {
         	tipoCambioService.actualizarTiposDeCambio(nuevosRatios);
-            return ResponseEntity.ok("Se actualizaron los datos correctamnete");
+        	CambioDeRatiosResponse response = new CambioDeRatiosResponse("Se actualizaron los datos correctamnete");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se pudo actualizar los datos");
+        	CambioDeRatiosResponse errorResponse = new CambioDeRatiosResponse("No se pudo actualizar los datos, error: "+ e.getMessage());
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 }
